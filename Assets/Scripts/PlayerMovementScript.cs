@@ -53,7 +53,6 @@ public class PlayerMovementScript : MonoBehaviour {
     /// </summary>
     public float rightRotation = 90.0f;
 
-    private bool moving;
     private float elapsedTime;
     private Vector3 current;
     private Vector3 target;
@@ -66,10 +65,9 @@ public class PlayerMovementScript : MonoBehaviour {
     private GameStateControllerScript gameStateController;
     private int score;
 
-    public void Start()
-    {
+    public void Start () {
         current = transform.position;
-        moving = false;
+        IsMoving = false;
         startY = transform.position.y;
 
         body = GetComponentInChildren<Rigidbody>();
@@ -80,24 +78,23 @@ public class PlayerMovementScript : MonoBehaviour {
         gameStateController = GameObject.Find("GameStateController").GetComponent<GameStateControllerScript>();
     }
 
-    public void Update()
-    {
+    public void Update () {
+        // move the camera to the local player
+        Camera.main.GetComponent<MPCameraMovement>().moveToPosition(transform.position);
+
         // If player is moving, update the player position, else receive input from user.
-        if (moving)
-        {
+        if (IsMoving) {
             MovePlayer();
         }
-        else
-        {
+        else {
             // Update current to match integer position (not fractional).
             current = new Vector3(
                 Mathf.Round(transform.position.x),
                 Mathf.Round(transform.position.y),
                 Mathf.Round(transform.position.z)
-            );
+                );
 
-            if (canMove)
-            {
+            if (canMove) {
                 HandleInput();
             }
         }
@@ -116,98 +113,75 @@ public class PlayerMovementScript : MonoBehaviour {
             //body.MovePosition(new Vector3(x, y, z));
         } */
 
-        score = Mathf.Max(score, (int)current.z);
+        score = Mathf.Max(score, (int) current.z);
         gameStateController.score = score;
     }
-	
-	private void HandleMouseClick()
-	{
-		RaycastHit hit;
-		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		
-		if (Physics.Raycast(ray, out hit))
-		{
-			var direction = hit.point - transform.position;
-			var x = direction.x;
-			var z = direction.z;
-			
-			// North = abs(z) > abs(x), z > 0
-			// South = abs(z) > abs(x), z < 0
-			// East  = abs(z) < abs(x), x > 0
-			// West  = abs(z) < abs(x), x < 0
-			
-			if (Mathf.Abs(z) > Mathf.Abs(x))
-			{
-				if (z > 0)
-				{
-					Move(new Vector3(0, 0, 1));
-				}
-				else // (z < 0)
-				{
-					Move(new Vector3(0, 0, -1));
-				}
-			}
-			else // (Mathf.Abs(z) < Mathf.Abs(x))
-			{
-				if (x > 0)
-				{
-					if (Mathf.RoundToInt(current.x) < maxX)
-					{
-						Move(new Vector3(1, 0, 0));
-					}
-				}
-				else // (x < 0)
-				{
-					if (Mathf.RoundToInt(current.x) > minX)
-					{
-						Move(new Vector3(-1, 0, 0));
-					}
-				}
-			}
-        }
-	}
 
-    private void HandleInput()
-    {
-        // Directions:
-        // North = W = Z+
-        // South = S = Z-
-        // East  = A = X-
-        // West  = D = X+
-		
-		// Handle mouse click
-		if (Input.GetMouseButtonDown(0))
-		{
-			HandleMouseClick();
-			return;
-		}
-		
-        if (Input.GetKeyDown(KeyCode.W))
-        {
+    private void HandleMouseClick () {
+        RaycastHit hit;
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(ray, out hit)) {
+            var direction = hit.point - transform.position;
+            var x = direction.x;
+            var z = direction.z;
+
+            // North = abs(z) > abs(x), z > 0
+            // South = abs(z) > abs(x), z < 0
+            // East  = abs(z) < abs(x), x > 0
+            // West  = abs(z) < abs(x), x < 0
+
+            if (Mathf.Abs(z) > Mathf.Abs(x)) {
+                if (z > 0) {
+                    Move(new Vector3(0, 0, 1));
+                }
+                else // (z < 0)
+                {
+                    Move(new Vector3(0, 0, -1));
+                }
+            }
+            else // (Mathf.Abs(z) < Mathf.Abs(x))
+            {
+                if (x > 0) {
+                    if (Mathf.RoundToInt(current.x) < maxX) {
+                        Move(new Vector3(1, 0, 0));
+                    }
+                }
+                else // (x < 0)
+                {
+                    if (Mathf.RoundToInt(current.x) > minX) {
+                        Move(new Vector3(-1, 0, 0));
+                    }
+                }
+            }
+        }
+    }
+
+    private void HandleInput () {
+        if (Input.GetMouseButtonDown(0)) {
+            HandleMouseClick();
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.W)) {
             Move(new Vector3(0, 0, 1));
         }
-        else if (Input.GetKeyDown(KeyCode.S))
-        {
+        else if (Input.GetKeyDown(KeyCode.S)) {
             Move(new Vector3(0, 0, -1));
         }
-        else if (Input.GetKeyDown(KeyCode.A))
-        {
-            if (Mathf.RoundToInt(current.x) > minX)
-            {
+        else if (Input.GetKeyDown(KeyCode.A)) {
+            if (Mathf.RoundToInt(current.x) > minX) {
                 Move(new Vector3(-1, 0, 0));
             }
         }
-        else if (Input.GetKeyDown(KeyCode.D))
-        {
-            if (Mathf.RoundToInt(current.x) < maxX)
-            {
+        else if (Input.GetKeyDown(KeyCode.D)) {
+            if (Mathf.RoundToInt(current.x) < maxX) {
                 Move(new Vector3(1, 0, 0));
             }
         }
     }
 
-    private void Move(Vector3 distance)
-    {
+    private void Move (Vector3 distance) {
         var newPosition = current + distance;
 
         // Don't move if blocked by obstacle.
@@ -215,13 +189,12 @@ public class PlayerMovementScript : MonoBehaviour {
 
         target = newPosition;
 
-        moving = true;
+        IsMoving = true;
         elapsedTime = 0;
         body.isKinematic = true;
 
         // Rotate mesh.
-        switch (MoveDirection)
-        {
+        switch (MoveDirection) {
             case "north":
                 mesh.transform.rotation = Quaternion.Euler(0, 0, 0);
                 break;
@@ -239,99 +212,75 @@ public class PlayerMovementScript : MonoBehaviour {
         }
 
         // Rotate arm and leg.
-        foreach (var o in leftSide)
-        {
+        foreach (var o in leftSide) {
             o.transform.Rotate(leftRotation, 0, 0);
         }
 
-        foreach (var o in rightSide)
-        {
+        foreach (var o in rightSide) {
             o.transform.Rotate(rightRotation, 0, 0);
         }
     }
 
-    private void MovePlayer()
-    {
+    private void MovePlayer () {
         elapsedTime += Time.deltaTime;
 
-        float weight = (elapsedTime < timeForMove) ? (elapsedTime / timeForMove) : 1;
-        float x = Lerp(current.x, target.x, weight);
-        float z = Lerp(current.z, target.z, weight);
-        float y = Sinerp(current.y, startY + jumpHeight, weight);
+        var weight = (elapsedTime < timeForMove) ? (elapsedTime/timeForMove) : 1;
+        var x = Lerp(current.x, target.x, weight);
+        var z = Lerp(current.z, target.z, weight);
+        var y = Sinerp(current.y, startY + jumpHeight, weight);
 
-        Vector3 result = new Vector3(x, y, z);
+        var result = new Vector3(x, y, z);
         transform.position = result; // note to self: why using transform produce better movement?
         //body.MovePosition(result);
 
-        if (result == target)
-        {
-            moving = false;
+        if (result == target) {
+            IsMoving = false;
             current = target;
             body.isKinematic = false;
             body.AddForce(0, -10, 0, ForceMode.VelocityChange);
 
             // Return arm and leg to original position.
-            foreach (var o in leftSide)
-            {
+            foreach (var o in leftSide) {
                 o.transform.rotation = Quaternion.identity;
             }
 
-            foreach (var o in rightSide)
-            {
+            foreach (var o in rightSide) {
                 o.transform.rotation = Quaternion.identity;
             }
         }
     }
 
-    private float Lerp(float min, float max, float weight)
-    {
-        return min + (max - min) * weight;
+    private float Lerp (float min, float max, float weight) {
+        return min + (max - min)*weight;
     }
 
-    private float Sinerp(float min, float max, float weight)
-    {
-        return min + (max - min) * Mathf.Sin(weight * Mathf.PI);
+    private float Sinerp (float min, float max, float weight) {
+        return min + (max - min)*Mathf.Sin(weight*Mathf.PI);
     }
 
-    public bool IsMoving
-    {
-        get { return moving; }
-    }
+    public bool IsMoving { get; private set; }
 
-    public string MoveDirection
-    {
-        get
-        {
-            if (moving)
-            {
-                float dx = target.x - current.x;
-                float dz = target.z - current.z;
-                if (dz > 0)
-                {
+    public string MoveDirection {
+        get {
+            if (IsMoving) {
+                var dx = target.x - current.x;
+                var dz = target.z - current.z;
+                if (dz > 0) {
                     return "north";
                 }
-                else if (dz < 0)
-                {
+                if (dz < 0) {
                     return "south";
                 }
-                else if (dx > 0)
-                {
+                if (dx > 0) {
                     return "west";
                 }
-                else
-                {
-                    return "east";
-                }
+                return "east";
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
     }
 
-    public void GameOver()
-    {
+    public void GameOver () {
         // When game over, disable moving.
         canMove = false;
 
@@ -339,8 +288,7 @@ public class PlayerMovementScript : MonoBehaviour {
         gameStateController.GameOver();
     }
 
-    public void Reset()
-    {
+    public void Reset () {
         // TODO This kind of reset is dirty, refactor might be needed.
         transform.position = new Vector3(0, 1, 0);
         transform.localScale = new Vector3(1, 1, 1);

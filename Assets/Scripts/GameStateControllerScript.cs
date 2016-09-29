@@ -77,7 +77,7 @@ public class GameStateControllerScript : MonoBehaviour {
 
         GameObject.Find("LevelController").SendMessage("Reset");
         GameObject.FindGameObjectWithTag("Player").SendMessage("Reset");
-        GameObject.FindGameObjectWithTag("MainCamera").SendMessage("Reset");
+//        GameObject.FindGameObjectWithTag("MainCamera").SendMessage("Reset");
     }
 
     public void Play()
@@ -87,7 +87,7 @@ public class GameStateControllerScript : MonoBehaviour {
         score = 0;
 
         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovementScript>().canMove = true;
-        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraMovementScript>().moving = true;
+//        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraMovementScript>().moving = true;
     }
 
     public void GameOver()
@@ -97,7 +97,7 @@ public class GameStateControllerScript : MonoBehaviour {
 
         gameOverScore.text = score.ToString();
 
-        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraMovementScript>().moving = false;
+//        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraMovementScript>().moving = false;
     }
 
     private GameObject CurrentCanvas
