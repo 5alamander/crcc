@@ -27,10 +27,7 @@ public class LevelControllerScript : MonoBehaviour {
 
     private GameObject player;
 
-    GameObject _container;
-    public GameObject container {
-        get {return _container ?? (_container = Singleton.getObject("lines"));}
-    }
+	public Container container = new Container("[lines]");
 
     public void Start () {
         player = GameObject.FindGameObjectWithTag("Player");
@@ -48,7 +45,7 @@ public class LevelControllerScript : MonoBehaviour {
         for (var z = Mathf.Max(minZ, playerZ - lineBehind); z <= playerZ + lineAhead; z++) {
             if (!lines.ContainsKey(z)) {
                 var line = getRandomLineAt(linePrefabs, z);
-                line.transform.SetParent(container.transform);
+				container.set(line);
                 lines.Add(z, line);
             }
         }

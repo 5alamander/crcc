@@ -43,10 +43,7 @@ public class TrunkGeneratorScript : MonoBehaviour {
 
     private List<GameObject> trunks;
 
-    GameObject _container;
-    public GameObject container {
-        get {return _container ?? (_container = Singleton.getObject("trunks"));}
-    }
+	public Container container = new Container("[trunks]");
 
     public void Start()
     {
@@ -73,7 +70,7 @@ public class TrunkGeneratorScript : MonoBehaviour {
 
             var position = transform.position + new Vector3(direction == Direction.Left ? rightX : leftX, 0, 0);
             var o = (GameObject)Instantiate(trunkPrefab, position, Quaternion.identity);
-            o.transform.SetParent(container.transform);
+			container.set(o);
             o.GetComponent<TrunkFloatingScript>().speedX = (int)direction * speed;
 
             var scale = o.transform.localScale;
