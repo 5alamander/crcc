@@ -1,0 +1,3 @@
+[submodule "Assets/Sa1Tools"]
+	path = Assets/Sa1Tools
+	url = https://git.oschina.net/Salamander/cstool.git
