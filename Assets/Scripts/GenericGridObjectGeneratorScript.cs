@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Sa1;
 
 public class GenericGridObjectGeneratorScript : MonoBehaviour {
 
@@ -41,6 +42,11 @@ public class GenericGridObjectGeneratorScript : MonoBehaviour {
 
     private List<GameObject> generatedObjects;
 
+    GameObject _container;
+    public GameObject container {
+        get {return _container ?? (_container = Singleton.getObject("grids"));}
+    }
+
     public void Start()
     {
         generatedObjects = new List<GameObject>();
@@ -58,6 +64,7 @@ public class GenericGridObjectGeneratorScript : MonoBehaviour {
                     relative ? transform.position + new Vector3(x, y, z) : new Vector3(x, y, z),
                     Quaternion.identity
                 );
+                o.transform.SetParent(container.transform);
 
                 generatedObjects.Add(o);
                 OnInstantiate(o);

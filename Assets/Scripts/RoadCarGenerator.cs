@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Sa1;
 
 public class RoadCarGenerator : MonoBehaviour {
 
@@ -41,6 +42,11 @@ public class RoadCarGenerator : MonoBehaviour {
 
     private List<GameObject> cars;
 
+    GameObject _container;
+    public GameObject container {
+        get {return _container ?? (_container = Singleton.getObject("cars"));}
+    }
+
     public void Start()
     {
         if (randomizeValues)
@@ -64,6 +70,7 @@ public class RoadCarGenerator : MonoBehaviour {
             // TODO extract 0.375f and -0.5f to outside -- probably along with genericization
             var position = transform.position + new Vector3(direction == Direction.Left ? rightX : leftX, 0.375f, -0.5f);
             var o = (GameObject)Instantiate(carPrefabs[Random.Range(0, carPrefabs.Length)], position, Quaternion.identity);
+            o.transform.SetParent(container.transform);
             o.GetComponent<CarScript>().speedX = (int)direction * speed;
 
             cars.Add(o);

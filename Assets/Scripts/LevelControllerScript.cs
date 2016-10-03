@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using Sa1;
 
 public class LevelControllerScript : MonoBehaviour {
     /// <summary>
@@ -26,6 +27,11 @@ public class LevelControllerScript : MonoBehaviour {
 
     private GameObject player;
 
+    GameObject _container;
+    public GameObject container {
+        get {return _container ?? (_container = Singleton.getObject("lines"));}
+    }
+
     public void Start () {
         player = GameObject.FindGameObjectWithTag("Player");
 
@@ -42,6 +48,7 @@ public class LevelControllerScript : MonoBehaviour {
         for (var z = Mathf.Max(minZ, playerZ - lineBehind); z <= playerZ + lineAhead; z++) {
             if (!lines.ContainsKey(z)) {
                 var line = getRandomLineAt(linePrefabs, z);
+                line.transform.SetParent(container.transform);
                 lines.Add(z, line);
             }
         }

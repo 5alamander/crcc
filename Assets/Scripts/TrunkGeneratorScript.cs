@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Sa1;
 
 public class TrunkGeneratorScript : MonoBehaviour {
 
@@ -42,6 +43,11 @@ public class TrunkGeneratorScript : MonoBehaviour {
 
     private List<GameObject> trunks;
 
+    GameObject _container;
+    public GameObject container {
+        get {return _container ?? (_container = Singleton.getObject("trunks"));}
+    }
+
     public void Start()
     {
 	    if (randomizeValues)
@@ -67,6 +73,7 @@ public class TrunkGeneratorScript : MonoBehaviour {
 
             var position = transform.position + new Vector3(direction == Direction.Left ? rightX : leftX, 0, 0);
             var o = (GameObject)Instantiate(trunkPrefab, position, Quaternion.identity);
+            o.transform.SetParent(container.transform);
             o.GetComponent<TrunkFloatingScript>().speedX = (int)direction * speed;
 
             var scale = o.transform.localScale;
