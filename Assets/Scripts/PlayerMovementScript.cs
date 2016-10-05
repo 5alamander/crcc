@@ -91,8 +91,7 @@ public class PlayerMovementScript : MonoBehaviour {
             current = new Vector3(
                 Mathf.Round(transform.position.x),
                 Mathf.Round(transform.position.y),
-                Mathf.Round(transform.position.z)
-                );
+                Mathf.Round(transform.position.z));
 
             if (canMove) {
                 HandleInput();
