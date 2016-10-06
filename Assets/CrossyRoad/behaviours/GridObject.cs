@@ -13,6 +13,7 @@ public class GridObject : MonoBehaviour {
 		csp.go(this, timeout());
 		csp.go(this, wholeTimeout());
 		csp.go(this, daisyChainFunctor());
+		//csp.go(GetComponent<Bullet>(), daisyChainFunctor());
 		csp.go(this, pingpongFunctor());
 	}
 
@@ -77,8 +78,7 @@ public class GridObject : MonoBehaviour {
 	}
 
 	IEnumerator daisyChainFunctor () {
-		var startTime = Time.time;
-		var n = 500;
+		var n = 1000;
 		var leftmost = csp.chan();
 		var right = leftmost;
 		var left = leftmost;
@@ -89,7 +89,8 @@ public class GridObject : MonoBehaviour {
 			left = right;
 		}
 
-		csp.asyncPut(this, right, 1);
+		csp.putAsync(this, right, 1);
+		var startTime = Time.time;
 
 		yield return csp.take(leftmost);
 		var endTime = Time.time;
@@ -106,10 +107,11 @@ public class GridObject : MonoBehaviour {
 	}
 
 	IEnumerator pingpongFunctor() {
-		var table = csp.chan();
+		var table = csp.chan(2);
 		csp.go(this, player("ping", table));
 		csp.go(this, player("pong", table));
 
+		yield return csp.put(table, 0);
 		yield return csp.put(table, 0);
 		yield return csp.timeout(2f);
 
