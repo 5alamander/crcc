@@ -8,22 +8,10 @@ namespace CrossyRoad {
 	/// </summary>
 	public class PlayerMovement : MonoBehaviour {
 
-		public string playerName;
-		public string playerColor;
-
-		/// <summary>
-		/// Player will only process input if this variable is true.
-		/// </summary>
 		public bool canMove = false;
 
-		/// <summary>
-		/// Time needed for a step (from grid to grid), in seconds.
-		/// </summary>
 		public float timeForMove = 0.2f;
 
-		/// <summary>
-		/// Jump height, in units.
-		/// </summary>
 		public float jumpHeight = 1.0f;
 
 		/// <summary>
@@ -36,20 +24,13 @@ namespace CrossyRoad {
 		/// </summary>
 		public int maxX = 4;
 
-		/// <summary>
-		/// Amount of rotation for left side, in degrees.
-		/// </summary>
-		public float leftRotation = -45.0f;
-
-		/// <summary>
-		/// Amount of rotation for right side, in degrees.
-		/// </summary>
-		public float rightRotation = 90.0f;
-
 		private float elapsedTime;
+
 		private Vector3 current;
+
 		private Vector3 target;
-		private float startY;
+
+		private float landHeight;
 
 		private Rigidbody body;
 
@@ -60,7 +41,7 @@ namespace CrossyRoad {
 		public void Start () {
 			current = transform.position;
 			IsMoving = false;
-			startY = transform.position.y;
+			landHeight = transform.position.y;
 
 			body = GetComponentInChildren<Rigidbody>();
 			score = 0;
@@ -159,10 +140,11 @@ namespace CrossyRoad {
 		}
 
 		private void Move (Vector3 distance) {
+
 			var newPosition = current + distance;
 
 			// Don't move if blocked by obstacle.
-			if (Physics.CheckSphere(newPosition + new Vector3(0.0f, 0.5f, 0.0f), 0.1f)) return;
+			if (Physics.CheckSphere(newPosition.withY(1), 0.1f)) return;
 
 			target = newPosition;
 
@@ -170,24 +152,7 @@ namespace CrossyRoad {
 			elapsedTime = 0;
 			body.isKinematic = true;
 
-			// Rotate mesh.
-			//switch (MoveDirection) {
-			//	case "north":
-			//		mesh.transform.rotation = Quaternion.Euler(0, 0, 0);
-			//		break;
-			//	case "south":
-			//		mesh.transform.rotation = Quaternion.Euler(0, 180, 0);
-			//		break;
-			//	case "east":
-			//		mesh.transform.rotation = Quaternion.Euler(0, 270, 0);
-			//		break;
-			//	case "west":
-			//		mesh.transform.rotation = Quaternion.Euler(0, 90, 0);
-			//		break;
-			//	default:
-			//		break;
-			//}
-
+			transform.forward = distance;
 		}
 
 		private void MovePlayer () {
@@ -196,7 +161,7 @@ namespace CrossyRoad {
 			var weight = (elapsedTime < timeForMove) ? (elapsedTime / timeForMove) : 1;
 			var x = Lerp(current.x, target.x, weight);
 			var z = Lerp(current.z, target.z, weight);
-			var y = Sinerp(current.y, startY + jumpHeight, weight);
+			var y = Sinerp(current.y, landHeight + jumpHeight, weight);
 
 			var result = new Vector3(x, y, z);
 			transform.position = result; // note to self: why using transform produce better movement?

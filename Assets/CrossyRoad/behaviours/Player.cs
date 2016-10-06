@@ -37,6 +37,7 @@ namespace CrossyRoad {
 
 		public void initState (Vector3 position) {
 			this.transform.position = position.withY(0.5f);
+			GetComponent<PlayerMovement>().canMove = true;
 		}
 
 	}
