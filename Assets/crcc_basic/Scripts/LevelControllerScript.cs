@@ -25,18 +25,19 @@ public class LevelControllerScript : MonoBehaviour {
 
     private Dictionary<int, GameObject> lines;
 
-    private GameObject player;
+    private GameObject center;
 
 	public Container container = new Container("[lines]");
 
     public void Start () {
-        player = GameObject.FindGameObjectWithTag("Player");
+		center = GameObject.Find("LineCenter");
 
         lines = new Dictionary<int, GameObject>();
     }
 
     public void Update () {
-        generateLines(player);
+		// TODO call this by player
+        generateLines(center);
     }
 
     private void generateLines (GameObject thePlayer) {
