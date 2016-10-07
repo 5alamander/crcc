@@ -23,6 +23,8 @@ namespace CrossyRoad {
 		        setSelfNameAndColor();
 		    }
 		    // set self name, and self color
+
+			var anim = GetComponentInChildren<Animation>();
 		}
 
 		void Update () {

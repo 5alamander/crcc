@@ -8,11 +8,12 @@ public class TestCsp : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		csp.go(this, simple());
-		csp.go(this, timeout());
-		csp.go(this, wholeTimeout());
-		csp.go(this, daisyChainFunctor());
+		csp.go(this, putYield());
+		// csp.go(this, timeout());
+		// csp.go(this, wholeTimeout());
+		// csp.go(this, daisyChainFunctor());
 		//csp.go(GetComponent<Bullet>(), daisyChainFunctor());
-		csp.go(this, pingpongFunctor());
+		// csp.go(this, pingpongFunctor());
 	}
 
 	// Update is called once per frame
@@ -45,6 +46,21 @@ public class TestCsp : MonoBehaviour {
 			Debug.Log("you say " + csp.ret);
 		}
 		Debug.Log("you are boring");
+	}
+
+	IEnumerator putYield() {
+		var ch = csp.chan();
+		csp.takeAsync(this, ch, ob =>{
+			Debug.Log((int)ob);
+			Debug.Log("take next put");
+		});
+		yield return csp.put(ch, 1);
+		csp.putAsync(this, ch, 1);
+		yield return csp.take(ch);
+		Debug.Log("take before");
+		yield return csp.put(ch, 1);
+		yield return csp.take(ch);
+		Debug.Log("you are not expected to see this");
 	}
 
 	IEnumerator timeout () {

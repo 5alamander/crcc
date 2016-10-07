@@ -60,10 +60,7 @@ namespace CrossyRoad {
 			}
 			else {
 				// Update current to match integer position (not fractional).
-				current = new Vector3(
-					Mathf.Round(transform.position.x),
-					Mathf.Round(transform.position.y),
-					Mathf.Round(transform.position.z));
+				current = grids.round(transform.position); 
 
 				if (canMove) {
 
@@ -76,6 +73,10 @@ namespace CrossyRoad {
 			}
 
 			score = Mathf.Max(score, (int)current.z);
+		}
+
+		void HandleTouchPad () {
+			Vector2 inputDirection = BasicPanel.Instance.direction;
 		}
 
 		private void HandleMouseClick () {
