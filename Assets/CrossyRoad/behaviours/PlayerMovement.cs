@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using Sa1;
 
 namespace CrossyRoad {
@@ -6,7 +7,7 @@ namespace CrossyRoad {
 	/// <summary>
 	///     network player,
 	/// </summary>
-	public class PlayerMovement : MonoBehaviour {
+	public class PlayerMovement : NetworkBehaviour {
 
 		public bool canMove = false;
 
@@ -36,8 +37,6 @@ namespace CrossyRoad {
 
 		private int score;
 
-		MPCameraMovement cameraMovement;
-
 		public void Start () {
 			current = transform.position;
 			IsMoving = false;
@@ -45,14 +44,11 @@ namespace CrossyRoad {
 
 			body = GetComponentInChildren<Rigidbody>();
 			score = 0;
-
-			cameraMovement = Camera.main.GetComponent<MPCameraMovement>();
 		}
 
 		public void Update () {
 
-			// move the camera to the local player
-			cameraMovement.moveToPosition(transform.position);
+			if (!isLocalPlayer) return;
 
 			// If player is moving, update the player position, else receive input from user.
 			if (IsMoving) {
@@ -81,12 +77,6 @@ namespace CrossyRoad {
 			Vector2 inputDirection = BasicPanel.Instance.direction;
 			if (inputDirection != Vector2.zero) {
                 Vector3 formatedDirection = GridObject.formateDirection(inputDirection.x, inputDirection.y);
-                if (formatedDirection.x > 0 && Mathf.RoundToInt(current.x) >= maxX) {
-                    return;
-                }
-                else if (formatedDirection.x < 0 && Mathf.RoundToInt(current.x) <= minX) {
-                    return;
-                }
                 Move(formatedDirection);
 			}
 			else if (BasicPanel.Instance.padTapped) {
@@ -98,12 +88,6 @@ namespace CrossyRoad {
 			Camera.main.onRayHit(hitInfo => {
 				var direction = hitInfo.point - transform.position;
 				var formatedDirection = GridObject.formateDirection(direction);
-				if (formatedDirection.x > 0 && Mathf.RoundToInt(current.x) >= maxX) {
-					return;
-				}
-				else if (formatedDirection.x < 0 && Mathf.RoundToInt(current.x) <= minX) {
-					return;
-				}
                 Move(formatedDirection);
 			});
 		}
@@ -129,6 +113,12 @@ namespace CrossyRoad {
 		}
 
 		private void Move (Vector3 distance) {
+            if (distance.x > 0 && Mathf.RoundToInt(current.x) >= maxX) {
+                return;
+            }
+            else if (distance.x < 0 && Mathf.RoundToInt(current.x) <= minX) {
+                return;
+            }
 
 			var newPosition = current + distance;
 

@@ -15,11 +15,15 @@ namespace CrossyRoad {
 		Animator _animator;
 		
 		PlayerMovement _movement;
+		MPCameraMovement _cameraMovement;
 
 		/// <summary>
 		///     set self name, to distinct from other player
 		/// </summary>
 		void Start () {
+			_animator = GetComponent<Animator>();
+			_movement = GetComponent<PlayerMovement>();
+			_cameraMovement = Camera.main.GetComponent<MPCameraMovement>();
 
 			initMovementState(Vector3.zero);
 
@@ -27,14 +31,12 @@ namespace CrossyRoad {
                 // set self name, and self color
                 setSelfNameAndColor();
 		    }
-
-			_animator = GetComponent<Animator>();
-			_movement = GetComponent<PlayerMovement>();
 		}
 
 		void Update () {
 		    if (isLocalPlayer) {
-		        // move the camera
+                // move the camera to the local player
+                _cameraMovement.moveToPosition(transform.position);
 		    }
 		}
 
@@ -44,18 +46,21 @@ namespace CrossyRoad {
 
 		public void initMovementState (Vector3 position) {
 			this.transform.position = position.withY(1f);
-			GetComponent<PlayerMovement>().canMove = true;
+			_movement.canMove = true;
 		}
 
 		public void onDie () {
-			// set y as 0.1
+			// set the look
             transform.localScale = transform.localScale.withY(0.1f);
+			// set the movement state
 			_movement.canMove = false;
 		}
 
 		public void onReset () {
-			initMovementState(Vector3.zero);
+			// set the look
 			transform.localScale = Vector3.one;
+			// set the movement state
+			initMovementState(Vector3.zero);
 		}
 
 	}
