@@ -66,9 +66,11 @@ namespace CrossyRoad {
 
 					HandleKeyInput();
 
-					if (Input.GetMouseButtonDown(0)) {
-						HandleMouseClick();
-					}
+					// if (Input.GetMouseButtonDown(0)) {
+					// 	HandleMouseClick();
+					// }
+
+					HandleTouchPad();
 				}
 			}
 

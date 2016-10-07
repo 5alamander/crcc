@@ -12,19 +12,21 @@ namespace CrossyRoad {
 		public string playerName;
 		public string playerColor;
 
+		Animator _animator;
+
 		/// <summary>
 		///     set self name, to distinct from other player
 		/// </summary>
 		void Start () {
 
-			initState(Vector3.zero);
+			initMovementState(Vector3.zero);
 
 		    if (isLocalPlayer) {
-		        setSelfNameAndColor();
+                // set self name, and self color
+                setSelfNameAndColor();
 		    }
-		    // set self name, and self color
 
-			var anim = GetComponentInChildren<Animation>();
+			_animator = GetComponent<Animator>();
 		}
 
 		void Update () {
@@ -37,7 +39,7 @@ namespace CrossyRoad {
 
 		}
 
-		public void initState (Vector3 position) {
+		public void initMovementState (Vector3 position) {
 			this.transform.position = position.withY(0.5f);
 			GetComponent<PlayerMovement>().canMove = true;
 		}
@@ -47,7 +49,7 @@ namespace CrossyRoad {
 		}
 
 		public void onReset () {
-
+			initMovementState(Vector3.zero);
 		}
 
 	}

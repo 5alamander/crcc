@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class BasicPanel : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
+public class BasicPanel : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler {
     private static BasicPanel _instance;
     public static BasicPanel Instance {
         get {return _instance;}
@@ -11,6 +11,7 @@ public class BasicPanel : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     public RectTransform padHandler;
 
     public Vector2 direction {get; private set;}
+    public bool padTapped {get; private set;}
 
     public bool toggleButtonA {get; private set;}
     public bool toggleButtonB {get; private set;}
@@ -24,6 +25,7 @@ public class BasicPanel : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         // refresh the toggle
         toggleButtonA = false;
         toggleButtonB = false;
+        padTapped = false;
     }
 
     public void OnBeginDrag(PointerEventData eventData) {
@@ -46,6 +48,10 @@ public class BasicPanel : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         direction = Vector2.zero;
         padBottom.gameObject.SetActive(false);
         padHandler.gameObject.SetActive(false);
+    }
+
+    public void OnPointerClick(PointerEventData eventData) {
+        padTapped = true;
     }
 
     public void PressButtonA() {
