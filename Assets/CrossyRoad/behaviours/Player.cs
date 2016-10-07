@@ -13,6 +13,8 @@ namespace CrossyRoad {
 		public string playerColor;
 
 		Animator _animator;
+		
+		PlayerMovement _movement;
 
 		/// <summary>
 		///     set self name, to distinct from other player
@@ -27,6 +29,7 @@ namespace CrossyRoad {
 		    }
 
 			_animator = GetComponent<Animator>();
+			_movement = GetComponent<PlayerMovement>();
 		}
 
 		void Update () {
@@ -40,16 +43,19 @@ namespace CrossyRoad {
 		}
 
 		public void initMovementState (Vector3 position) {
-			this.transform.position = position.withY(0.5f);
+			this.transform.position = position.withY(1f);
 			GetComponent<PlayerMovement>().canMove = true;
 		}
 
 		public void onDie () {
-
+			// set y as 0.1
+            transform.localScale = transform.localScale.withY(0.1f);
+			_movement.canMove = false;
 		}
 
 		public void onReset () {
 			initMovementState(Vector3.zero);
+			transform.localScale = Vector3.one;
 		}
 
 	}

@@ -60,7 +60,7 @@ namespace CrossyRoad {
 			}
 			else {
 				// Update current to match integer position (not fractional).
-				current = grids.round(transform.position); 
+				current = GridObject.round(transform.position); 
 
 				if (canMove) {
 
@@ -79,20 +79,25 @@ namespace CrossyRoad {
 
 		void HandleTouchPad () {
 			Vector2 inputDirection = BasicPanel.Instance.direction;
-			Vector3 formatedDirection = grids.formateDirection(inputDirection.x, inputDirection.y);
-			if (formatedDirection.x > 0 && Mathf.RoundToInt(current.x) >= maxX) {
-				return;
+			if (inputDirection != Vector2.zero) {
+                Vector3 formatedDirection = GridObject.formateDirection(inputDirection.x, inputDirection.y);
+                if (formatedDirection.x > 0 && Mathf.RoundToInt(current.x) >= maxX) {
+                    return;
+                }
+                else if (formatedDirection.x < 0 && Mathf.RoundToInt(current.x) <= minX) {
+                    return;
+                }
+                Move(formatedDirection);
 			}
-			else if (formatedDirection.x < 0 && Mathf.RoundToInt(current.x) <= minX) {
-				return;
+			else if (BasicPanel.Instance.padTapped) {
+				Move(GridObject.formateDirection(transform.forward));
 			}
-            Move(formatedDirection);
 		}
 
 		private void HandleMouseClick () {
 			Camera.main.onRayHit(hitInfo => {
 				var direction = hitInfo.point - transform.position;
-				var formatedDirection = grids.formateDirection(direction);
+				var formatedDirection = GridObject.formateDirection(direction);
 				if (formatedDirection.x > 0 && Mathf.RoundToInt(current.x) >= maxX) {
 					return;
 				}
