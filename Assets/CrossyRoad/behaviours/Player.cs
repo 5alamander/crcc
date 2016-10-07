@@ -42,5 +42,13 @@ namespace CrossyRoad {
 			GetComponent<PlayerMovement>().canMove = true;
 		}
 
+		public void onDie () {
+
+		}
+
+		public void onReset () {
+
+		}
+
 	}
 }

@@ -77,47 +77,28 @@ namespace CrossyRoad {
 
 		void HandleTouchPad () {
 			Vector2 inputDirection = BasicPanel.Instance.direction;
+			Vector3 formatedDirection = grids.formateDirection(inputDirection.x, inputDirection.y);
+			if (formatedDirection.x > 0 && Mathf.RoundToInt(current.x) >= maxX) {
+				return;
+			}
+			else if (formatedDirection.x < 0 && Mathf.RoundToInt(current.x) <= minX) {
+				return;
+			}
+            Move(formatedDirection);
 		}
 
 		private void HandleMouseClick () {
-
-			RaycastHit hit;
-			var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-			if (Physics.Raycast(ray, out hit)) {
-				var direction = hit.point - transform.position;
-				var x = direction.x;
-				var z = direction.z;
-
-				// North = abs(z) > abs(x), z > 0
-				// South = abs(z) > abs(x), z < 0
-				// East  = abs(z) < abs(x), x > 0
-				// West  = abs(z) < abs(x), x < 0
-
-				if (Mathf.Abs(z) > Mathf.Abs(x)) {
-					if (z > 0) {
-						Move(new Vector3(0, 0, 1));
-					}
-					else // (z < 0)
-					{
-						Move(new Vector3(0, 0, -1));
-					}
+			Camera.main.onRayHit(hitInfo => {
+				var direction = hitInfo.point - transform.position;
+				var formatedDirection = grids.formateDirection(direction);
+				if (formatedDirection.x > 0 && Mathf.RoundToInt(current.x) >= maxX) {
+					return;
 				}
-				else // (Mathf.Abs(z) < Mathf.Abs(x))
-				{
-					if (x > 0) {
-						if (Mathf.RoundToInt(current.x) < maxX) {
-							Move(new Vector3(1, 0, 0));
-						}
-					}
-					else // (x < 0)
-					{
-						if (Mathf.RoundToInt(current.x) > minX) {
-							Move(new Vector3(-1, 0, 0));
-						}
-					}
+				else if (formatedDirection.x < 0 && Mathf.RoundToInt(current.x) <= minX) {
+					return;
 				}
-			}
+                Move(formatedDirection);
+			});
 		}
 
 		private void HandleKeyInput () {
