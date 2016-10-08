@@ -75,12 +75,15 @@ namespace CrossyRoad {
 
 		void HandleTouchPad () {
 			Vector2 inputDirection = BasicPanel.Instance.direction;
-			if (inputDirection != Vector2.zero) {
-                Vector3 formatedDirection = GridObject.formateDirection(inputDirection.x, inputDirection.y);
-                Move(formatedDirection);
+			// if (inputDirection != Vector2.zero) {
+            //     Vector3 formatedDirection = GridObject.formateDirection(inputDirection.x, inputDirection.y);
+            //     Move(formatedDirection);
+			// }
+			if (BasicPanel.Instance.padTapped) {
+				CmdMove(GridObject.formateDirection(transform.forward));
 			}
-			else if (BasicPanel.Instance.padTapped) {
-				Move(GridObject.formateDirection(transform.forward));
+			else if (inputDirection != Vector2.zero) {
+				CmdRotateTo(inputDirection);
 			}
 		}
 
@@ -88,31 +91,37 @@ namespace CrossyRoad {
 			Camera.main.onRayHit(hitInfo => {
 				var direction = hitInfo.point - transform.position;
 				var formatedDirection = GridObject.formateDirection(direction);
-                Move(formatedDirection);
+                CmdMove(formatedDirection);
 			});
 		}
 
 		private void HandleKeyInput () {
 
 			if (Input.GetKeyDown(KeyCode.W)) {
-				Move(new Vector3(0, 0, 1));
+				CmdMove(new Vector3(0, 0, 1));
 			}
 			else if (Input.GetKeyDown(KeyCode.S)) {
-				Move(new Vector3(0, 0, -1));
+				CmdMove(new Vector3(0, 0, -1));
 			}
 			else if (Input.GetKeyDown(KeyCode.A)) {
 				if (Mathf.RoundToInt(current.x) > minX) {
-					Move(new Vector3(-1, 0, 0));
+					CmdMove(new Vector3(-1, 0, 0));
 				}
 			}
 			else if (Input.GetKeyDown(KeyCode.D)) {
 				if (Mathf.RoundToInt(current.x) < maxX) {
-					Move(new Vector3(1, 0, 0));
+					CmdMove(new Vector3(1, 0, 0));
 				}
 			}
 		}
 
-		private void Move (Vector3 distance) {
+		[Command]
+		void CmdRotateTo (Vector2 v) {
+			transform.forward = new Vector3(v.x, 0, v.y);
+		}
+
+		[Command]
+		private void CmdMove (Vector3 distance) {
             if (distance.x > 0 && Mathf.RoundToInt(current.x) >= maxX) {
                 return;
             }
