@@ -31,14 +31,11 @@ namespace CrossyRoad {
 
 		private Vector3 target;
 
-		private float landHeight;
-
 		private Rigidbody body;
 
 		public void Start () {
 			current = transform.position;
 			IsMoving = false;
-			landHeight = transform.position.y;
 
 			body = GetComponentInChildren<Rigidbody>();
 		}
@@ -123,7 +120,8 @@ namespace CrossyRoad {
 			var newPosition = current + distance;
 
 			// Don't move if blocked by obstacle.
-			if (Physics.CheckSphere(newPosition.withY(1), 0.1f)) return;
+			// if (Physics.CheckSphere(newPosition, 0.1f)) return;
+			if (GridObject.rayFind(current, distance, 1) != null) return;
 
 			target = newPosition;
 
@@ -140,7 +138,7 @@ namespace CrossyRoad {
 			var weight = (elapsedTime < timeForMove) ? (elapsedTime / timeForMove) : 1;
 			var x = Lerp(current.x, target.x, weight);
 			var z = Lerp(current.z, target.z, weight);
-			var y = Sinerp(current.y, landHeight + jumpHeight, weight);
+			var y = Sinerp(current.y, GridObject.onLandY + jumpHeight, weight);
 
 			var result = new Vector3(x, y, z);
 			transform.position = result; // note to self: why using transform produce better movement?

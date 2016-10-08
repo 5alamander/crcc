@@ -6,6 +6,7 @@ namespace Sa1 {
 public class BasicPad : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler {
     
     public Vector2 direction {get; private set;}
+    public Vector2 lastDirection {get; private set;}
     public bool padTapped {get; private set;}
     
     public RectTransform padBottom;
@@ -15,6 +16,7 @@ public class BasicPad : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     
     protected virtual void LateUpdate() {
         padTapped = false;
+        lastDirection = direction;
     }
 
     public void OnBeginDrag(PointerEventData eventData) {

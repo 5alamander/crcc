@@ -12,7 +12,8 @@ namespace CrossyRoad {
 
         BasicPad _actionPad;
 
-        bool _holdObject = false;
+        bool _isHoldObject = false;
+        GameObject _theObejct = null;
 
         /// <summary>
         /// Start is called on the frame when a script is enabled just before
@@ -25,20 +26,38 @@ namespace CrossyRoad {
         /// <summary>
         /// Update is called every frame, if the MonoBehaviour is enabled.
         /// </summary>
-        void Update() { 
-           if (_actionPad.padTapped) {
-               // get object in front of player
-           } 
+        void Update() {
+            if (_actionPad.padTapped) {
+                var dirct = _actionPad.lastDirection != Vector2.zero
+                    ? GridObject.formateDirection(_actionPad.lastDirection)
+                    : transform.forward;
+                if (_isHoldObject) { // cast it
+                    _isHoldObject = !cast(dirct);
+                }
+                else { // take it
+                    _isHoldObject = take(dirct);
+                }
+            }
         }
 
         public bool take (Vector3 direction) {
             // get object in the direction
             // check if it can be hold
-            throw new NotImplementedException();
+            var trans = GridObject.rayFind(transform.position, direction, 1);
+            if (!trans) return false;
+            if (trans.tag == GridObject.type.item || trans.tag == GridObject.type.item) {
+                _theObejct = trans.gameObject;
+                trans.SetParent(transform);
+                trans.localPosition = Vector3.zero.withY(1); // TODO calculate with height
+                return true;
+            }
+            return false;
         }
 
         public bool cast (Vector3 direction) {
-            throw new NotImplementedException();
+            _theObejct.transform.SetParent(null, true);
+            _theObejct.transform.position = transform.localPosition + direction;
+            return true;
         }
 
     }

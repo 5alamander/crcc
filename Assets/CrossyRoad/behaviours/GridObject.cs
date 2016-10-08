@@ -31,6 +31,15 @@ public class GridObject : MonoBehaviour {
 
 	// ** functions **
 
+    public const int onLandY = 1;
+
+    // find and set
+    public static Transform rayFind (Vector3 position, Vector3 direction, int distance) {
+        var ray = new Ray(position, direction);
+        return ray.pickObject(distance);
+    }
+
+    // round and format
     public static Vector3 round (Vector3 position) {
         return new Vector3(
             Mathf.Round(position.x),
@@ -60,6 +69,10 @@ public class GridObject : MonoBehaviour {
                 return new Vector3(-1, 0, 0);
             }
         }
+    }
+
+    public static Vector3 formateDirection (Vector2 direction) {
+        return formateDirection(direction.x, direction.y);
     }
 
     public static Vector3 formateDirection (Vector3 direction) {

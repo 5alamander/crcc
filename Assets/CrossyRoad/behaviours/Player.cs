@@ -58,6 +58,11 @@ namespace CrossyRoad {
 			Invoke("onReset", 2f);
 		}
 
+		public void onDrown () {
+			_movement.canMove = false;	
+			Invoke("onReset", 1f);
+		}
+
 		public void onReset () {
 			// set the look
 			transform.localScale = Vector3.one;
