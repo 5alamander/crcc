@@ -8,19 +8,25 @@ using Sa1;
 /// </summary>
 public class GridObject : MonoBehaviour {
 
+    public static class type {
+        public const string player = "Player";
+        public const string item = "Item";
+        public const string block = "Block";
+    }
+
 	public int height = 1;
 
 	void Start () {
-
+        transform.position = round(transform.position);
 	}
 
 	void Update () {
 
 	}
 
-	void OnDrawGizmosSelected() {
-        Gizmos.color = new Color(1, 0, 0, 0.5F);
-        Gizmos.DrawWireCube(transform.position, new Vector3(1, 1, 1));
+	void OnDrawGizmos() {
+        Gizmos.color = new Color(1, 0, 0, 0.5f);
+        Gizmos.DrawWireCube(transform.position, new Vector3(1, height, 1));
     }
 
 	// ** functions **

@@ -2,11 +2,17 @@
 using UnityEngine.EventSystems;
 
 namespace Sa1{
-    
+
 public class BasicPanel : BasicPad {
     private static BasicPanel _instance;
     public static BasicPanel Instance {
         get {return _instance;}
+    }
+
+    public RectTransform[] buttons;
+
+    public RectTransform this[int index] {
+        get { return buttons[index]; }
     }
 
     public bool toggleButtonA {get; private set;}
