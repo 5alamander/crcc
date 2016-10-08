@@ -22,7 +22,7 @@ public class WaterSplashScript : MonoBehaviour {
             var o = (GameObject)Instantiate(splashPrefab, other.transform.position, Quaternion.Euler(-90, 0, 0));
             Destroy(o, splashLifetime);
 
-            other.SendMessage("GameOver");
+            other.SendMessage("onReset");
         }
     }
 

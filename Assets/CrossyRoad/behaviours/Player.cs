@@ -54,6 +54,8 @@ namespace CrossyRoad {
             transform.localScale = transform.localScale.withY(0.1f);
 			// set the movement state
 			_movement.canMove = false;
+
+			Invoke("onReset", 2f);
 		}
 
 		public void onReset () {

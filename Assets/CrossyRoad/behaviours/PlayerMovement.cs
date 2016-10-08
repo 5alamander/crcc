@@ -35,42 +35,33 @@ namespace CrossyRoad {
 
 		private Rigidbody body;
 
-		private int score;
-
 		public void Start () {
 			current = transform.position;
 			IsMoving = false;
 			landHeight = transform.position.y;
 
 			body = GetComponentInChildren<Rigidbody>();
-			score = 0;
 		}
 
 		public void Update () {
-
 			if (!isLocalPlayer) return;
 
-			// If player is moving, update the player position, else receive input from user.
 			if (IsMoving) {
 				MovePlayer();
 			}
-			else {
+			// If player is moving, update the player position, else receive input from user.
+			if (!IsMoving) {
 				// Update current to match integer position (not fractional).
 				current = GridObject.round(transform.position); 
 
 				if (canMove) {
-
 					HandleKeyInput();
-
 					// if (Input.GetMouseButtonDown(0)) {
 					// 	HandleMouseClick();
 					// }
-
 					HandleTouchPad();
 				}
 			}
-
-			score = Mathf.Max(score, (int)current.z);
 		}
 
 		void HandleTouchPad () {
@@ -160,7 +151,6 @@ namespace CrossyRoad {
 				current = target;
 				body.isKinematic = false;
 				body.AddForce(0, -10, 0, ForceMode.VelocityChange);
-
 			}
 		}
 
