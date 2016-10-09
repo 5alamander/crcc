@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 using Sa1;
+using DG.Tweening;
+using System.Collections;
 
 namespace CrossyRoad {
 
@@ -10,10 +12,11 @@ namespace CrossyRoad {
 	public class PlayerMovement : NetworkBehaviour {
 
 		public bool canMove = false;
-
+		public bool isMoving = false;
 		public float timeForMove = 0.2f;
-
 		public float jumpHeight = 1.0f;
+
+		Vector3 _targetPosition;
 
 		/// <summary>
 		/// Minimum grid X position allowed for player.
@@ -25,32 +28,29 @@ namespace CrossyRoad {
 		/// </summary>
 		public int maxX = 4;
 
-		private float elapsedTime;
-
-		private Vector3 current;
-
-		private Vector3 target;
-
-		private Rigidbody body;
-
 		public void Start () {
-			current = transform.position;
-			IsMoving = false;
+			onReset();
+		}
 
-			body = GetComponentInChildren<Rigidbody>();
+		public void onDie () {
+			
+		}
+
+		public void onReset () {
+			IsMoving = false;
+			_targetPosition = transform.position;
 		}
 
 		public void Update () {
-			if (!isLocalPlayer) return;
 
-			if (IsMoving) {
-				MovePlayer();
-			}
+			// if (!isMoving && transform.position != _targetPosition) {
+			// 	StartCoroutine(moveTo(_targetPosition));
+			// }
+
+			if (!isLocalPlayer) return;
 			// If player is moving, update the player position, else receive input from user.
 			if (!IsMoving) {
 				// Update current to match integer position (not fractional).
-				current = GridObject.round(transform.position); 
-
 				if (canMove) {
 					HandleKeyInput();
 					// if (Input.GetMouseButtonDown(0)) {
@@ -85,19 +85,19 @@ namespace CrossyRoad {
 
 		private void HandleKeyInput () {
 
-			if (Input.GetKeyDown(KeyCode.W)) {
+			if (Input.GetKeyUp(KeyCode.W)) {
 				CmdMove(new Vector3(0, 0, 1));
 			}
-			else if (Input.GetKeyDown(KeyCode.S)) {
+			else if (Input.GetKeyUp(KeyCode.S)) {
 				CmdMove(new Vector3(0, 0, -1));
 			}
-			else if (Input.GetKeyDown(KeyCode.A)) {
-				if (Mathf.RoundToInt(current.x) > minX) {
+			else if (Input.GetKeyUp(KeyCode.A)) {
+				if (Mathf.RoundToInt(transform.position.x) > minX) {
 					CmdMove(new Vector3(-1, 0, 0));
 				}
 			}
-			else if (Input.GetKeyDown(KeyCode.D)) {
-				if (Mathf.RoundToInt(current.x) < maxX) {
+			else if (Input.GetKeyUp(KeyCode.D)) {
+				if (Mathf.RoundToInt(transform.position.x) < maxX) {
 					CmdMove(new Vector3(1, 0, 0));
 				}
 			}
@@ -110,76 +110,44 @@ namespace CrossyRoad {
 
 		[Command]
 		private void CmdMove (Vector3 distance) {
-            if (distance.x > 0 && Mathf.RoundToInt(current.x) >= maxX) {
+            if (distance.x > 0 && Mathf.RoundToInt(transform.position.x) >= maxX) {
                 return;
             }
-            else if (distance.x < 0 && Mathf.RoundToInt(current.x) <= minX) {
+            else if (distance.x < 0 && Mathf.RoundToInt(transform.position.x) <= minX) {
                 return;
             }
 
-			var newPosition = current + distance;
+			var newPosition = transform.position + distance;
 
 			// Don't move if blocked by obstacle.
 			// if (Physics.CheckSphere(newPosition, 0.1f)) return;
-			if (GridObject.rayFind(current, distance, 1) != null) return;
+			if (GridObject.rayFind(transform.position, distance, 1) != null) return;
 
-			target = newPosition;
+			// _targetPosition = newPosition;
 
-			IsMoving = true;
-			elapsedTime = 0;
-			body.isKinematic = true;
+			// do jump
+			transform.DOKill(true);
+			transform.DOJump(newPosition, jumpHeight, 1, timeForMove)
+				.SetEase(Ease.InOutSine)
+				.OnComplete(()=>{
+					transform.position = GridObject.round(transform.position);
+				});
 
 			transform.forward = distance;
 		}
 
-		private void MovePlayer () {
-			elapsedTime += Time.deltaTime;
+		IEnumerator moveTo (Vector3 position) {
+			isMoving = true;
+			transform.DOKill(true);
 
-			var weight = (elapsedTime < timeForMove) ? (elapsedTime / timeForMove) : 1;
-			var x = Lerp(current.x, target.x, weight);
-			var z = Lerp(current.z, target.z, weight);
-			var y = Sinerp(current.y, GridObject.onLandY + jumpHeight, weight);
+			yield return transform.DOJump(position, jumpHeight, 1, timeForMove)
+				.SetEase(Ease.InOutSine).WaitForCompletion();
 
-			var result = new Vector3(x, y, z);
-			transform.position = result; // note to self: why using transform produce better movement?
-										 //body.MovePosition(result);
-
-			if (result == target) {
-				IsMoving = false;
-				current = target;
-				body.isKinematic = false;
-				body.AddForce(0, -10, 0, ForceMode.VelocityChange);
-			}
-		}
-
-		private float Lerp (float min, float max, float weight) {
-			return min + (max - min) * weight;
-		}
-
-		private float Sinerp (float min, float max, float weight) {
-			return min + (max - min) * Mathf.Sin(weight * Mathf.PI);
+			transform.position = GridObject.round(transform.position);
+			_targetPosition = transform.position;
+			isMoving = false;
 		}
 
 		public bool IsMoving { get; private set; }
-
-		public string MoveDirection {
-			get {
-				if (IsMoving) {
-					var dx = target.x - current.x;
-					var dz = target.z - current.z;
-					if (dz > 0) {
-						return "north";
-					}
-					if (dz < 0) {
-						return "south";
-					}
-					if (dx > 0) {
-						return "west";
-					}
-					return "east";
-				}
-				return null;
-			}
-		}
 	}
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System;
 using Sa1;
+using DG.Tweening;
 
 namespace CrossyRoad {
 
@@ -23,6 +24,11 @@ namespace CrossyRoad {
             _actionPad = BasicPanel.Instance[1].GetComponent<BasicPad>();
         }
 
+        void onDie () {
+            _isHoldObject = false;
+            _theObejct = null;
+        }
+
         /// <summary>
         /// Update is called every frame, if the MonoBehaviour is enabled.
         /// </summary>
@@ -38,6 +44,15 @@ namespace CrossyRoad {
                     _isHoldObject = take(dirct);
                 }
             }
+
+            if (_isHoldObject) {
+                _theObejct.transform.position = transform.position.withY(
+                    transform.position.y + 1);
+            }
+        }
+
+        void LateUpdate () {
+            
         }
 
         public bool take (Vector3 direction) {
@@ -45,18 +60,17 @@ namespace CrossyRoad {
             // check if it can be hold
             var trans = GridObject.rayFind(transform.position, direction, 1);
             if (!trans) return false;
-            if (trans.tag == GridObject.type.item || trans.tag == GridObject.type.item) {
+            if (trans.tag == GridObject.Tag.item || trans.tag == GridObject.Tag.item) {
                 _theObejct = trans.gameObject;
-                trans.SetParent(transform);
-                trans.localPosition = Vector3.zero.withY(1); // TODO calculate with height
                 return true;
             }
             return false;
         }
 
         public bool cast (Vector3 direction) {
-            _theObejct.transform.SetParent(null, true);
-            _theObejct.transform.position = transform.localPosition + direction;
+            _theObejct.transform.DOKill(true);
+            _theObejct.transform.DOJump(transform.localPosition + direction, 1f, 1, 0.3f)
+                .SetEase(Ease.InOutSine);
             return true;
         }
 

@@ -2,33 +2,38 @@
 using UnityEngine;
 using System.Collections;
 using Sa1;
+using DG.Tweening;
 
 /// <summary>
 /// generic grid object
 /// </summary>
 public class GridObject : MonoBehaviour {
 
-    public static class type {
+    public static class Tag {
         public const string player = "Player";
         public const string item = "Item";
         public const string block = "Block";
     }
 
-	public int height = 1;
+    public static class Layer {
+        public static readonly int grid = LayerMask.GetMask("GridObject");
+        public static readonly int block = LayerMask.GetMask("Block");
+    }
 
-    Vector3 _gridPosition;
+	public int height = 1;
 
 	void Start () {
         transform.position = round(transform.position);
-        _gridPosition = transform.position;
 	}
 
 	void Update () {
         // transform.position = Vector3.Lerp(transform.position, _gridPosition, 0.5f);
 	}
 
-    public void setGridPosition(Vector3 position) {
-        _gridPosition = position;
+    public bool jumpTo (Vector3 endPosition, float jumpHeight) {
+        // check if the end position have the GridObject
+        transform.DOJump(endPosition, jumpHeight, 1, 0.5f);
+        return true;
     }
 
 	void OnDrawGizmos() {
@@ -36,11 +41,30 @@ public class GridObject : MonoBehaviour {
         Gizmos.DrawWireCube(transform.position, new Vector3(1, height, 1));
     }
 
-	// ** functions **
-
+    // ** params **
     public const int onLandY = 1;
 
+	// ** functions **
+
+    // grid interact
+    public static bool take (GridObject g1, GridObject g2) {
+        throw new NotImplementedException();
+    }
+
+    public static bool cast (GridObject g1, GridObject g2) {
+        throw new NotImplementedException();
+    }
+
+    public static bool cast (GridObject g1) {
+        throw new NotImplementedException();
+    }
+
     // find and set
+    public static Transform find (Vector3 position) {
+        var colls = Physics.OverlapBox(position, Vector3.one * 0.1f, Quaternion.identity, GridObject.Layer.grid);
+        return colls.Length > 0 ? colls[0].transform : null;
+    }
+
     public static Transform rayFind (Vector3 position, Vector3 direction, int distance) {
         var ray = new Ray(position, direction);
         return ray.pickObject(distance);
