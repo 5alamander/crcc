@@ -16,13 +16,20 @@ public class GridObject : MonoBehaviour {
 
 	public int height = 1;
 
+    Vector3 _gridPosition;
+
 	void Start () {
         transform.position = round(transform.position);
+        _gridPosition = transform.position;
 	}
 
 	void Update () {
-
+        // transform.position = Vector3.Lerp(transform.position, _gridPosition, 0.5f);
 	}
+
+    public void setGridPosition(Vector3 position) {
+        _gridPosition = position;
+    }
 
 	void OnDrawGizmos() {
         Gizmos.color = new Color(1, 0, 0, 0.5f);
