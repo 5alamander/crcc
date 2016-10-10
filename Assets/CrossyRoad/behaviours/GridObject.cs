@@ -13,6 +13,8 @@ public class GridObject : MonoBehaviour {
         public const string player = "Player";
         public const string item = "Item";
         public const string block = "Block";
+        public const string land = "Land";
+        public const string river = "River";
     }
 
     public static class Layer {
@@ -63,6 +65,10 @@ public class GridObject : MonoBehaviour {
     public static Transform find (Vector3 position) {
         var colls = Physics.OverlapBox(position, Vector3.one * 0.1f, Quaternion.identity, GridObject.Layer.grid);
         return colls.Length > 0 ? colls[0].transform : null;
+    }
+
+    public static Transform findLand (Vector3 position) {
+        return find(position.withY(onLandY));
     }
 
     public static Transform rayFind (Vector3 position, Vector3 direction, int distance) {

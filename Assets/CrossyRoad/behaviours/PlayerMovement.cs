@@ -37,7 +37,7 @@ namespace CrossyRoad {
 		}
 
 		public void onReset () {
-			IsMoving = false;
+			isMoving = false;
 			_targetPosition = transform.position;
 		}
 
@@ -49,7 +49,7 @@ namespace CrossyRoad {
 
 			if (!isLocalPlayer) return;
 			// If player is moving, update the player position, else receive input from user.
-			if (!IsMoving) {
+			if (!isMoving) {
 				// Update current to match integer position (not fractional).
 				if (canMove) {
 					HandleKeyInput();
@@ -127,9 +127,11 @@ namespace CrossyRoad {
 
 			// do jump
 			transform.DOKill(true);
-			isMoving = true;
 			transform.DOJump(newPosition, jumpHeight, 1, timeForMove)
 				.SetEase(Ease.InOutSine)
+				.OnStart(() => {
+					isMoving = true;
+				})
 				.OnComplete(()=>{
 					transform.position = GridObject.round(transform.position);
 					isMoving = false;
@@ -149,7 +151,5 @@ namespace CrossyRoad {
 			_targetPosition = transform.position;
 			isMoving = false;
 		}
-
-		public bool IsMoving { get; private set; }
 	}
 }
