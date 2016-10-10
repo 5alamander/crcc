@@ -27,10 +27,14 @@ namespace CrossyRoad {
 
 			initMovementState(Vector3.zero);
 
-		    if (isLocalPlayer) {
-                // set self name, and self color
-                setSelfNameAndColor();
-		    }
+		    // if (isLocalPlayer) {
+            //     // set self name, and self color
+            //     setSelfNameAndColor();
+		    // }
+		}
+
+		public override void OnStartLocalPlayer () {
+			setSelfNameAndColor();
 		}
 
 		void Update () {

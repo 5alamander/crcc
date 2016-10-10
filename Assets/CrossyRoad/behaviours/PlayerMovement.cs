@@ -43,19 +43,13 @@ namespace CrossyRoad {
 
 		public void Update () {
 
-			// if (!isMoving && transform.position != _targetPosition) {
-			// 	StartCoroutine(moveTo(_targetPosition));
-			// }
-
 			if (!isLocalPlayer) return;
+
 			// If player is moving, update the player position, else receive input from user.
 			if (!isMoving) {
 				// Update current to match integer position (not fractional).
 				if (canMove) {
 					HandleKeyInput();
-					// if (Input.GetMouseButtonDown(0)) {
-					// 	HandleMouseClick();
-					// }
 					HandleTouchPad();
 				}
 			}
@@ -103,12 +97,12 @@ namespace CrossyRoad {
 			}
 		}
 
-		[Command]
+		// [Command]
 		void CmdRotateTo (Vector2 v) {
 			transform.forward = new Vector3(v.x, 0, v.y);
 		}
 
-		[Command]
+		// [Command]
 		private void CmdMove (Vector3 distance) {
             if (distance.x > 0 && Mathf.RoundToInt(transform.position.x) >= maxX) {
                 return;
