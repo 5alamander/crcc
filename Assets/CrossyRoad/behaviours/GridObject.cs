@@ -15,6 +15,8 @@ public class GridObject : MonoBehaviour {
         public const string block = "Block";
         public const string land = "Land";
         public const string river = "River";
+        public const string car = "Car";
+        public const string obstacle = "Obstacle";
     }
 
     public static class Layer {

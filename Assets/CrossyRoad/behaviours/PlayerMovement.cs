@@ -123,8 +123,6 @@ namespace CrossyRoad {
 			// if (Physics.CheckSphere(newPosition, 0.1f)) return;
 			if (GridObject.rayFind(transform.position, distance, 1) != null) return;
 
-			// _targetPosition = newPosition;
-
 			// do jump
 			transform.DOKill(true);
 			transform.DOJump(newPosition, jumpHeight, 1, timeForMove)
