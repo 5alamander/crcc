@@ -25,6 +25,14 @@ namespace CrossyRoad {
         }
 
         void onDie () {
+            onReset();
+        }
+
+        void onDrown () {
+            onReset();
+        }
+
+        void onReset () {
             _isHoldObject = false;
             _theObejct = null;
         }

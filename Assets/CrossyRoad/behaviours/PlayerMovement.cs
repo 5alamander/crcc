@@ -127,10 +127,12 @@ namespace CrossyRoad {
 
 			// do jump
 			transform.DOKill(true);
+			isMoving = true;
 			transform.DOJump(newPosition, jumpHeight, 1, timeForMove)
 				.SetEase(Ease.InOutSine)
 				.OnComplete(()=>{
 					transform.position = GridObject.round(transform.position);
+					isMoving = false;
 				});
 
 			transform.forward = distance;
