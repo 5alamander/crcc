@@ -49,9 +49,18 @@ namespace CrossyRoad {
 			_movement.canMove = true;
 		}
 
-		public void onDie () {
+		/// car-front, car-side
+		public void onDie (string tp) {
 			// set the look
-            transform.localScale = transform.localScale.withY(0.1f);
+			switch (tp) {
+				case "car-side":
+					transform.localScale = transform.localScale.withZ(0.1f);
+					transform.position += transform.forward * 0.5f;
+					break;
+				case "car-front":
+				default: transform.localScale = transform.localScale.withY(0.1f); break;
+			}
+
 			// set the movement state
 			_movement.canMove = false;
 

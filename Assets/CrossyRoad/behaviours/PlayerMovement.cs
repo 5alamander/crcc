@@ -119,9 +119,20 @@ namespace CrossyRoad {
 
 			var newPosition = transform.position + distance;
 
+			transform.forward = distance;
+
 			// Don't move if blocked by obstacle.
 			// if (Physics.CheckSphere(newPosition, 0.1f)) return;
-			if (GridObject.rayFind(transform.position, distance, 1) != null) return;
+			var frontTrans = GridObject.rayFind(transform.position, distance, 1);
+			if (frontTrans != null) {
+                // if (frontTrans.tag == GridObject.Tag.obstacle)
+				// 	return;
+				if (frontTrans.tag == GridObject.Tag.car) {
+					SendMessage("onDie", "car-side");
+					return;
+				}
+				return;
+			}
 
 			// do jump
 			transform.DOKill(true);
@@ -134,8 +145,6 @@ namespace CrossyRoad {
 					transform.position = GridObject.round(transform.position);
 					isMoving = false;
 				});
-
-			transform.forward = distance;
 		}
 
 		IEnumerator moveTo (Vector3 position) {

@@ -24,7 +24,7 @@ public class CarScript : MonoBehaviour {
         // When collide with player, flatten it!
         if (other.gameObject.tag == "Player")
         {
-            other.gameObject.SendMessage("onDie");
+            other.gameObject.SendMessage("onDie", "car-front");
         }
     }
 }

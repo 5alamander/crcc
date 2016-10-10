@@ -70,7 +70,7 @@ public class GridObject : MonoBehaviour {
     }
 
     public static Transform findLand (Vector3 position) {
-        return find(position.withY(onLandY));
+        return find(position.withY(onLandY - 1));
     }
 
     public static Transform rayFind (Vector3 position, Vector3 direction, int distance) {
