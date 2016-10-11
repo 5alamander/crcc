@@ -22,6 +22,7 @@ public class GridObject : MonoBehaviour {
     public static class Layer {
         public static readonly int grid = LayerMask.GetMask("GridObject");
         public static readonly int block = LayerMask.GetMask("Block");
+        public static readonly int land = LayerMask.GetMask("Land");
     }
 
 	public int height = 1;
@@ -65,12 +66,16 @@ public class GridObject : MonoBehaviour {
 
     // find and set
     public static Transform find (Vector3 position) {
-        var colls = Physics.OverlapBox(position, Vector3.one * 0.1f, Quaternion.identity, GridObject.Layer.grid);
+        return find(position, GridObject.Layer.grid);
+    }
+
+    public static Transform find (Vector3 position, int layerMask) {
+        var colls = Physics.OverlapBox(position, Vector3.one * 0.1f, Quaternion.identity, layerMask);
         return colls.Length > 0 ? colls[0].transform : null;
     }
 
     public static Transform findLand (Vector3 position) {
-        return find(position.withY(onLandY - 1));
+        return find(position.withY(onLandY - 1), GridObject.Layer.land);
     }
 
     public static Transform rayFind (Vector3 position, Vector3 direction, int distance) {

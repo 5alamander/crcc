@@ -13,6 +13,7 @@ namespace CrossyRoad {
 
 		public bool canMove = false;
 		public bool isMoving = false;
+		public bool onLand = true;
 		public float timeForMove = 0.2f;
 		public float jumpHeight = 1.0f;
 
@@ -111,8 +112,6 @@ namespace CrossyRoad {
                 return;
             }
 
-			var newPosition = transform.position + distance;
-
 			transform.forward = distance;
 
 			// Don't move if blocked by obstacle.
@@ -127,6 +126,16 @@ namespace CrossyRoad {
 				}
 				return;
 			}
+
+			var newPosition = transform.position + distance;
+
+			// var frontLandTrans = GridObject.findLand(newPosition);
+			// if (frontLandTrans != null) {
+			// 	Debug.Log("hit land: " + frontLandTrans.tag);
+			// 	if (frontLandTrans.tag == GridObject.Tag.river) {
+			// 		canMove = false;
+			// 	}
+			// }
 
 			doJump(newPosition);
 		}
@@ -154,6 +163,28 @@ namespace CrossyRoad {
 			transform.position = GridObject.round(transform.position);
 			_targetPosition = transform.position;
 			isMoving = false;
+		}
+
+		/// <summary>
+		/// OnCollisionEnter is called when this collider/rigidbody has begun
+		/// touching another rigidbody/collider.
+		/// </summary>
+		/// <param name="other">The Collision data associated with this collision.</param>
+		void OnCollisionEnter(Collision other) {
+			if (other.gameObject.tag == GridObject.Tag.land) {
+                onLand = true;
+			}
+		}
+
+		/// <summary>
+		/// OnCollisionExit is called when this collider/rigidbody has
+		/// stopped touching another rigidbody/collider.
+		/// </summary>
+		/// <param name="other">The Collision data associated with this collision.</param>
+		void OnCollisionExit(Collision other) {
+			if (other.gameObject.tag == GridObject.Tag.land) {
+				onLand = false;
+			}
 		}
 	}
 }
