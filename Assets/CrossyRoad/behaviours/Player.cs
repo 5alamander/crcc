@@ -26,11 +26,6 @@ namespace CrossyRoad {
 			_cameraMovement = Camera.main.GetComponent<MPCameraMovement>();
 
 			initMovementState(Vector3.zero);
-
-		    // if (isLocalPlayer) {
-            //     // set self name, and self color
-            //     setSelfNameAndColor();
-		    // }
 		}
 
 		public override void OnStartLocalPlayer () {

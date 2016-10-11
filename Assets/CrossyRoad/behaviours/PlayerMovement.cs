@@ -128,7 +128,10 @@ namespace CrossyRoad {
 				return;
 			}
 
-			// do jump
+			doJump(newPosition);
+		}
+
+		void doJump(Vector3 newPosition) {
 			transform.DOKill(true);
 			transform.DOJump(newPosition, jumpHeight, 1, timeForMove)
 				.SetEase(Ease.InOutSine)
