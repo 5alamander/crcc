@@ -9,7 +9,7 @@ using DG.Tweening;
 /// </summary>
 public class GridObject : MonoBehaviour {
 
-    public static class Tag {
+    public static class Tags {
         public const string player = "Player";
         public const string item = "Item";
         public const string block = "Block";
@@ -19,10 +19,14 @@ public class GridObject : MonoBehaviour {
         public const string obstacle = "Obstacle";
     }
 
-    public static class Layer {
+    public static class LayerMasks {
         public static readonly int grid = LayerMask.GetMask("GridObject");
         public static readonly int block = LayerMask.GetMask("Block");
         public static readonly int land = LayerMask.GetMask("Land");
+    }
+
+    public static class Layers {
+        public static readonly int land = LayerMask.NameToLayer("Land");
     }
 
 	public int height = 1;
@@ -66,7 +70,7 @@ public class GridObject : MonoBehaviour {
 
     // find and set
     public static Transform find (Vector3 position) {
-        return find(position, GridObject.Layer.grid);
+        return find(position, GridObject.LayerMasks.grid);
     }
 
     public static Transform find (Vector3 position, int layerMask) {
@@ -75,7 +79,7 @@ public class GridObject : MonoBehaviour {
     }
 
     public static Transform findLand (Vector3 position) {
-        return find(position.withY(onLandY - 1), GridObject.Layer.land);
+        return find(position.withY(onLandY - 1), GridObject.LayerMasks.land);
     }
 
     public static Transform rayFind (Vector3 position, Vector3 direction, int distance) {

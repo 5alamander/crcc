@@ -68,7 +68,7 @@ namespace CrossyRoad {
             // check if it can be hold
             var trans = GridObject.rayFind(transform.position, direction, 1);
             if (!trans) return false;
-            if (trans.tag == GridObject.Tag.item || trans.tag == GridObject.Tag.item) {
+            if (trans.tag == GridObject.Tags.item || trans.tag == GridObject.Tags.item) {
                 _theObejct = trans.gameObject;
                 return true;
             }

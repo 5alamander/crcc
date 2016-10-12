@@ -49,7 +49,7 @@ namespace CrossyRoad {
 			// If player is moving, update the player position, else receive input from user.
 			if (!isMoving) {
 				// Update current to match integer position (not fractional).
-				if (canMove) {
+				if (canMove && onLand) {
 					HandleKeyInput();
 					HandleTouchPad();
 				}
@@ -120,7 +120,7 @@ namespace CrossyRoad {
 			if (frontTrans != null) {
                 // if (frontTrans.tag == GridObject.Tag.obstacle)
 				// 	return;
-				if (frontTrans.tag == GridObject.Tag.car) {
+				if (frontTrans.tag == GridObject.Tags.car) {
 					SendMessage("onDie", "car-side");
 					return;
 				}
@@ -165,24 +165,14 @@ namespace CrossyRoad {
 			isMoving = false;
 		}
 
-		/// <summary>
-		/// OnCollisionEnter is called when this collider/rigidbody has begun
-		/// touching another rigidbody/collider.
-		/// </summary>
-		/// <param name="other">The Collision data associated with this collision.</param>
-		void OnCollisionEnter(Collision other) {
-			if (other.gameObject.tag == GridObject.Tag.land) {
+		void OnCollisionStay(Collision other) {
+			if (other.gameObject.layer == GridObject.Layers.land) {
                 onLand = true;
 			}
 		}
 
-		/// <summary>
-		/// OnCollisionExit is called when this collider/rigidbody has
-		/// stopped touching another rigidbody/collider.
-		/// </summary>
-		/// <param name="other">The Collision data associated with this collision.</param>
 		void OnCollisionExit(Collision other) {
-			if (other.gameObject.tag == GridObject.Tag.land) {
+			if (other.gameObject.layer == GridObject.Layers.land) {
 				onLand = false;
 			}
 		}
